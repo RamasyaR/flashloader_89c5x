@@ -23,14 +23,9 @@ class FlasherCLI(EZDLFlasher, Cmd):
             print(f'{handle_ecode(arg)} Expected device path, like /dev/ttyUSB0.')
             return
 
-        title = self.connect(arg)
-        if isinstance(title, str):
-            message = f'Successfully connected to {arg}.\n' \
-                      f'{title}'
-        elif title == Ecode.OK:
-            message = 'Programmer is already connected.'
-        else:
-            message = f'Connect to {arg} failed: {handle_ecode(title)}'
+        ecode = self.connect(arg)
+        message = 'Connected.' if ecode == Ecode.OK \
+            else f'Connect to {arg} failed: {handle_ecode(ecode)}'
         print(message)
 
     def do_disconnect(self, _) -> None:
@@ -46,7 +41,7 @@ class FlasherCLI(EZDLFlasher, Cmd):
 
     def do_programmer_info(self, _) -> None:
         title = self.get_title()
-        message = title if isinstance(title, str) else handle_ecode(title)
+        message = handle_ecode(title) if isinstance(title, Ecode) else title
         print(message)
 
     def do_chip_info(self, _) -> None:

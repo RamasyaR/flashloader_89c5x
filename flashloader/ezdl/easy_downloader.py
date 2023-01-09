@@ -6,7 +6,7 @@ import serial
 from flashloader.constants import Ecode, MCUMemorySize, ProgVoltages, SupportedMCU
 from flashloader.hex_processing import load_hex, save_hex
 
-from .decorators import check_chip, disconnect_if_error, is_connected
+from .decorators import check_chip, check_programmer
 from .enums import Commands
 from .messages import InfoMessage, PGMMessage
 from .utils import convert_counter, convert_str_to_enum, send_data
@@ -24,7 +24,9 @@ class EZDLFlasher:
                 return False
             elif not self._dev.is_open:
                 return False
-            elif not isinstance(self._get_programmer_title(), str):
+            elif isinstance(self._get_programmer_title(), Ecode):
+                if self._dev is not None:
+                    self._disconnect()
                 return False
             else:
                 return True
@@ -36,7 +38,7 @@ class EZDLFlasher:
     def device(self) -> Optional[str]:
         return self._dev.name if self._is_connected() else None
 
-    def connect(self, device: str) -> Union[str, Ecode]:
+    def connect(self, device: str) -> Ecode:
         if self._is_connected():
             logger.info('Programmer is already connected.')
             return Ecode.OK
@@ -47,13 +49,15 @@ class EZDLFlasher:
             logger.error(f'Open programmer on {device} failed: {ex}.')
             return Ecode.CONNECTION_ERROR
 
-        return self.get_title()
+        return Ecode.OK if self._is_connected() else Ecode.PROGRAMMER_NOT_FOUND
 
     def disconnect(self) -> Ecode:
         if not self._is_connected():
-            logger.info('Programmer is already disconnected.')
             return Ecode.OK
 
+        return self._disconnect()
+
+    def _disconnect(self):
         try:
             self._dev.close()
         except Exception as ex:
@@ -64,8 +68,7 @@ class EZDLFlasher:
         finally:
             self._dev = None
 
-    @is_connected
-    @disconnect_if_error
+    @check_programmer
     def get_title(self) -> Union[str, Ecode]:
         return self._get_programmer_title()
 
@@ -78,8 +81,7 @@ class EZDLFlasher:
         else:
             return " ".join(response.replace('>', '').split())
 
-    @is_connected
-    @disconnect_if_error
+    @check_programmer
     def get_info(self) -> Union[InfoMessage, Ecode]:
         return self._get_info()
 
@@ -108,9 +110,8 @@ class EZDLFlasher:
         else:
             return message
 
-    @is_connected
+    @check_programmer
     @check_chip
-    @disconnect_if_error
     def get_pgm(self) -> Union[PGMMessage, Ecode]:
         return self._get_pgm()
 
@@ -130,9 +131,8 @@ class EZDLFlasher:
         else:
             return message
 
-    @is_connected
+    @check_programmer
     @check_chip
-    @disconnect_if_error
     def get_checksum(self) -> Union[int, Ecode]:
         return self._get_checksum()
 
@@ -151,9 +151,8 @@ class EZDLFlasher:
         else:
             return checksum
 
-    @is_connected
+    @check_programmer
     @check_chip
-    @disconnect_if_error
     def set_cursor(self, position: int) -> Ecode:
         return self._set_cursor(position)
 
@@ -169,9 +168,8 @@ class EZDLFlasher:
             logger.debug(f'Set counter response: {response}')
             return Ecode.OK
 
-    @is_connected
+    @check_programmer
     @check_chip
-    @disconnect_if_error
     def erase(self) -> Ecode:
         return self._erase()
 
@@ -185,9 +183,8 @@ class EZDLFlasher:
             logger.debug(f'Erase response: {response}')
             return Ecode.OK
 
-    @is_connected
+    @check_programmer
     @check_chip
-    @disconnect_if_error
     def write(self, path: str) -> Ecode:
         return self._write(path)
 
@@ -217,9 +214,8 @@ class EZDLFlasher:
         print(f'Verify.')
         return self._verify(hex_str)
 
-    @is_connected
+    @check_programmer
     @check_chip
-    @disconnect_if_error
     def read(self, path: str):
         mcu_data = self._read()
         return save_hex(path, mcu_data)
@@ -229,7 +225,7 @@ class EZDLFlasher:
         if not isinstance(info, InfoMessage):
             return info
 
-        memorysize = cursor if isinstance(cursor, int) else MCUMemorySize.get(info.mcu)
+        memorysize = cursor if isinstance(cursor, int) else MCUMemorySize.get(info.mcu) - 1
         ecode = self._set_cursor(memorysize)
         if ecode != Ecode.OK:
             return ecode
@@ -242,7 +238,7 @@ class EZDLFlasher:
         else:
             return response
 
-    @is_connected
+    @check_programmer
     @check_chip
     def verify(self, path: str):
         return self._verify(path)

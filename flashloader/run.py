@@ -1,4 +1,4 @@
-from cli import FlasherCLI
+from .cli import FlasherCLI
 
 
 def main():

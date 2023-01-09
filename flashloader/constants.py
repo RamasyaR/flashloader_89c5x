@@ -1,13 +1,14 @@
-from enum import Enum, auto
+from enum import Enum
 
 
 class Ecode(str, Enum):
     OK = 'Command completed successfully.'
     FILE_NOT_EXIST = 'Invalid file path, file not exist.'
-    SAVING_FILE_ERROR = auto()
+    SAVING_FILE_ERROR = 'Saving file failed.'
     EMPTY_ARGUMENT = 'Argument expected but not passed.'
     PROCESSING_ARGUMENT_FAILED = 'Error processing input argument.'
     PROGRAMMER_DISCONNECTED = 'Programmer is not connected.'
+    PROGRAMMER_NOT_FOUND = 'Programmer not fount on current COM device.'
     CONNECTION_ERROR = 'Connecting to flasher programmer failed, replug your device.'
     DISCONNECTION_ERROR = 'Disconnecting finish with error.'
     HEX_PROCESSING_ERROR = 'Error processing hex file, check your binary file.'
@@ -16,11 +17,11 @@ class Ecode(str, Enum):
     ERASING_FAILED = 'Erasing chip memory failed'
     WRITING_FAILED = 'Writing hex file to chip memory failed.'
     READING_FAILED = 'Reading chip memory finished with error.'
-    VERIFICATION_FAILED = auto()
+    VERIFICATION_FAILED = 'Verification finished with error.'
     GETTING_CHECKSUM_FAILED = 'Error getting checksum from chip.'
     GETTING_PGM_DATA_FAILED = 'Error getting pgm data from chip.'
     GETTING_INFO_DATA_FAILED = 'Error getting programmer information.'
-    GETTING_TITLE_FAILED = auto()
+    GETTING_TITLE_FAILED = 'Error getting programmer info from chip.'
     GENERATE_COUNTER_DATA_FAILED = 'Generating counter message for programmer failed, invalid counter value.'
     GENERATE_PGM_MESSAGE_FAILED = 'Error parse PGM message from programmer.'
     GENERATE_INFO_MESSAGE_FAILED = 'Error parse chip information message from programmer.'
