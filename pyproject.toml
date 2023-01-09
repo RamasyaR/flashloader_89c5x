@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "flashloader"
+version = "0.0.1"
+description = "Flash loader utility for 89C51 microcontrollers"
+authors = ["Raman Rakavets <radikot88@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+include = ["README.md"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+pyserial = "~=3.5"
+intelhex = "~=2.3.0"
+pydantic = "~=1.10.2"
+
+[tool.poetry.scripts]
+flashloader = "flashloader.run:main"
+
+[tool.poetry.dev-dependencies]
+black = "^22.3.0"
+isort = "^5.10.1"
+
+[tool.isort]
+line_length = "100"
+skip = [".gitignore", ".dockerignore"]
+
+[tool.black]
+line-length = "120"
+verbose = "true"
