@@ -25,26 +25,24 @@ class FlasherCLI(EZDLFlasher, Cmd):
 
         title = self.connect(arg)
         if isinstance(title, str):
-            print(f'Successfully connected to {arg}.\n'
-                  f'{title}')
+            message = f'Successfully connected to {arg}.\n' \
+                      f'{title}'
         elif title == Ecode.OK:
-            print('Programmer is already connected.')
+            message = 'Programmer is already connected.'
         else:
-            print(f'Connect to {arg} failed: {handle_ecode(title)}')
+            message = f'Connect to {arg} failed: {handle_ecode(title)}'
+        print(message)
 
     def do_disconnect(self, _) -> None:
         ecode = self.disconnect()
-        if ecode != Ecode.OK:
-            print(f'Disconnecting finish with error: {handle_ecode(ecode)}')
-        else:
-            print(f'Successfully disconnected.')
+        message = 'Successfully disconnected.' if ecode == Ecode.OK \
+            else f'Disconnecting finish with error: {handle_ecode(ecode)}'
+        print(message)
 
     def do_status(self, _) -> None:
         dev = self.device
-        if dev is not None:
-            print(f'Programmer connected on {dev}.')
-        else:
-            print(f'Programmer is not connected.')
+        message = f'Programmer connected on {dev}.' if dev is not None else 'Programmer is not connected.'
+        print(message)
 
     def do_programmer_info(self, _) -> None:
         title = self.get_title()
@@ -54,25 +52,25 @@ class FlasherCLI(EZDLFlasher, Cmd):
     def do_chip_info(self, _) -> None:
         result = self.get_info()
         if isinstance(result, InfoMessage):
-            print(f'\nChip: {result.mcu}\n'
-                  f'Programming voltage: {result.prog_voltage_type}\n'
-                  f'Non blank memory bytes: {result.non_blank_bytes}\n')
+            message = f'\n' \
+                      f'Chip: {result.mcu}\n' \
+                      f'Programming voltage: {result.prog_voltage_type}\n' \
+                      f'Non blank memory bytes: {result.non_blank_bytes}\n'
         else:
-            print(handle_ecode(result))
+            message = handle_ecode(result)
+        print(message)
 
     def do_get_pgm(self, _) -> None:
         result = self.get_pgm()
-        if isinstance(result, PGMMessage):
-            print(f'Getting PGM completed successfully: {result}.')
-        else:
-            print(handle_ecode(result))
+        message = f'Getting PGM completed successfully: {result}.' if isinstance(result, PGMMessage) \
+            else handle_ecode(result)
+        print(message)
 
     def do_get_checksum(self, _) -> None:
         result = self.get_checksum()
-        if isinstance(result, Ecode):
-            print(handle_ecode(result))
-        else:
-            print(f'Getting checksum completed successfully: {result}.')
+        message = f'Getting checksum completed successfully: {result}.' if not isinstance(result, Ecode) \
+            else handle_ecode(result)
+        print(message)
 
     def do_set_cursor(self, arg: str) -> None:
         arg = parse_arg(arg, expected_type=int)
@@ -81,17 +79,14 @@ class FlasherCLI(EZDLFlasher, Cmd):
             return
 
         ecode = self.set_cursor(arg)
-        if ecode != Ecode.OK:
-            print(f'Set {arg} failed: {handle_ecode(ecode)}')
-        else:
-            print(f'Set byte cursor {arg} completed successfully.')
+        message = f'Set byte cursor {arg} completed successfully.' if ecode == Ecode.OK \
+            else f'Set {arg} failed: {handle_ecode(ecode)}'
+        print(message)
 
     def do_erase(self, _) -> None:
         ecode = self.erase()
-        if ecode != Ecode.OK:
-            print(handle_ecode(ecode))
-        else:
-            print(f'Erasing completed successfully.')
+        message = 'Erasing completed successfully.' if ecode == Ecode.OK else handle_ecode(ecode)
+        print(message)
 
     def do_write(self, arg: str) -> None:
         arg = parse_arg(arg)
@@ -100,10 +95,8 @@ class FlasherCLI(EZDLFlasher, Cmd):
             return
 
         ecode = self.write(arg)
-        if ecode != Ecode.OK:
-            print(handle_ecode(ecode))
-        else:
-            print(f'Writing completed successfully.')
+        message = 'Writing completed successfully.' if ecode == Ecode.OK else handle_ecode(ecode)
+        print(message)
 
     def do_read(self, arg: str):
         arg = parse_arg(arg)
@@ -112,10 +105,8 @@ class FlasherCLI(EZDLFlasher, Cmd):
             return
 
         ecode = self.read(arg)
-        if ecode != Ecode.OK:
-            print(handle_ecode(ecode))
-        else:
-            print(f'Reading memory completed successfully.')
+        message = 'Reading memory completed successfully.' if ecode == Ecode.OK else handle_ecode(ecode)
+        print(message)
 
     def do_verify(self, arg: str):
         arg = parse_arg(arg)
@@ -124,10 +115,8 @@ class FlasherCLI(EZDLFlasher, Cmd):
             return
 
         ecode = self.verify(arg)
-        if ecode != Ecode.OK:
-            print(handle_ecode(ecode))
-        else:
-            print(f'Verify memory completed successfully.')
+        message = 'Verify memory completed successfully.' if ecode == Ecode.OK else handle_ecode(ecode)
+        print(message)
 
     @staticmethod
     def do_exit(_):

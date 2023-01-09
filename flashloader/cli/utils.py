@@ -6,8 +6,6 @@ from typing import List, Union
 
 from flashloader.constants import Ecode
 
-from .constants import ECODE_MESSAGES
-
 logger = logging.getLogger(__name__)
 
 
@@ -49,4 +47,7 @@ def parse_arg(arg: str, expected_type: type = str) -> Union[str, int, float, Eco
 
 
 def handle_ecode(ecode: Ecode) -> str:
-    return ECODE_MESSAGES.get(ecode, 'Unexpected error, sorry.')
+    if isinstance(ecode, Ecode):
+        return str(ecode.value)
+    else:
+        return f'Unexpected error {ecode}, sorry.'

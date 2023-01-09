@@ -42,7 +42,7 @@ class EZDLFlasher:
             return Ecode.OK
 
         try:
-            self._dev = serial.Serial(device, 9600, timeout=5)
+            self._dev = serial.Serial(device, 9600)
         except Exception as ex:
             logger.error(f'Open programmer on {device} failed: {ex}.')
             return Ecode.CONNECTION_ERROR
@@ -233,7 +233,6 @@ class EZDLFlasher:
         ecode = self._set_cursor(memorysize)
         if ecode != Ecode.OK:
             return ecode
-
         try:
             response = send_data(self._dev, Commands.READ_FIRMWARE)
             response = bytes.fromhex(response)
@@ -255,7 +254,7 @@ class EZDLFlasher:
             return hex_obj
 
         mcu_data = self._read(len(hex_obj))
-        if mcu_data == hex_obj:
-            return Ecode.OK
-        else:
-            return Ecode.EMPTY_ARGUMENT
+        if not isinstance(mcu_data, bytes):
+            return mcu_data
+
+        return Ecode.OK if mcu_data == hex_obj else Ecode.VERIFICATION_FAILED

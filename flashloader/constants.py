@@ -1,30 +1,31 @@
 from enum import Enum, auto
 
 
-class Ecode(int, Enum):
-    OK = auto()
-    FILE_NOT_EXIST = auto()
+class Ecode(str, Enum):
+    OK = 'Command completed successfully.'
+    FILE_NOT_EXIST = 'Invalid file path, file not exist.'
     SAVING_FILE_ERROR = auto()
-    EMPTY_ARGUMENT = auto()
-    PROCESSING_ARGUMENT_FAILED = auto()
-    PROGRAMMER_DISCONNECTED = auto()
-    CONNECTION_ERROR = auto()
-    DISCONNECTION_ERROR = auto()
-    HEX_PROCESSING_ERROR = auto()
-    CHECKSUM_PROCESSING_ERROR = auto()
-    SET_CURSOR_FAILED = auto()
-    ERASING_FAILED = auto()
-    WRITING_FAILED = auto()
-    READING_FAILED = auto()
-    GETTING_CHECKSUM_FAILED = auto()
-    GETTING_PGM_DATA_FAILED = auto()
-    GETTING_INFO_DATA_FAILED = auto()
+    EMPTY_ARGUMENT = 'Argument expected but not passed.'
+    PROCESSING_ARGUMENT_FAILED = 'Error processing input argument.'
+    PROGRAMMER_DISCONNECTED = 'Programmer is not connected.'
+    CONNECTION_ERROR = 'Connecting to flasher programmer failed, replug your device.'
+    DISCONNECTION_ERROR = 'Disconnecting finish with error.'
+    HEX_PROCESSING_ERROR = 'Error processing hex file, check your binary file.'
+    CHECKSUM_PROCESSING_ERROR = 'Error processing checksum message.'
+    SET_CURSOR_FAILED = 'Set byte cursor finsh with error.'
+    ERASING_FAILED = 'Erasing chip memory failed'
+    WRITING_FAILED = 'Writing hex file to chip memory failed.'
+    READING_FAILED = 'Reading chip memory finished with error.'
+    VERIFICATION_FAILED = auto()
+    GETTING_CHECKSUM_FAILED = 'Error getting checksum from chip.'
+    GETTING_PGM_DATA_FAILED = 'Error getting pgm data from chip.'
+    GETTING_INFO_DATA_FAILED = 'Error getting programmer information.'
     GETTING_TITLE_FAILED = auto()
-    GENERATE_COUNTER_DATA_FAILED = auto()
-    GENERATE_PGM_MESSAGE_FAILED = auto()
-    GENERATE_INFO_MESSAGE_FAILED = auto()
-    UNKNOWN_CHIP = auto()
-    CHIP_NOT_FOUND = auto()
+    GENERATE_COUNTER_DATA_FAILED = 'Generating counter message for programmer failed, invalid counter value.'
+    GENERATE_PGM_MESSAGE_FAILED = 'Error parse PGM message from programmer.'
+    GENERATE_INFO_MESSAGE_FAILED = 'Error parse chip information message from programmer.'
+    UNKNOWN_CHIP = 'Failed to recognize the chip.'
+    CHIP_NOT_FOUND = 'Chip not found.'
 
 
 class ProgVoltages(str, Enum):
