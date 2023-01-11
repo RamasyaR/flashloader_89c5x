@@ -11,7 +11,7 @@ from .enums import Commands
 from .messages import InfoMessage, PGMMessage
 from .utils import convert_counter, convert_str_to_enum, send_data
 
-logger = logging.getLogger('ezdl_flasher')
+logger = logging.getLogger(__name__)
 
 
 class EZDLFlasher:

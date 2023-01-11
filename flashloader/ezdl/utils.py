@@ -1,5 +1,5 @@
 import logging
-from typing import Type, Union
+from typing import Optional, Type, Union
 
 import serial
 
@@ -9,7 +9,9 @@ from .enums import ActionSignals, Commands
 logger = logging.getLogger(__name__)
 
 
-def convert_str_to_enum(string: str, concrete_enum: Union[Type[SupportedMCU], Type[ProgVoltages]]):
+def convert_str_to_enum(string: str, concrete_enum: Union[Type[SupportedMCU],
+                                                          Type[ProgVoltages]]) -> Optional[Union[SupportedMCU,
+                                                                                                 ProgVoltages]]:
     if concrete_enum not in [SupportedMCU, ProgVoltages]:
         raise TypeError(f'Unexpected enum: {concrete_enum}')
 
@@ -18,7 +20,7 @@ def convert_str_to_enum(string: str, concrete_enum: Union[Type[SupportedMCU], Ty
     except (Exception, ):
         logger.warning(f'Unknown mcu property received: {string} , immediately remove the controller from the ZIF '
                        f'panel, there is a risk of damage.')
-        return concrete_enum.UNKNOWN
+        return None
 
 
 def convert_counter(count_num: int) -> bytes:

@@ -4,12 +4,16 @@ from cmd import Cmd
 from flashloader.constants import Ecode
 from flashloader.ezdl import EZDLFlasher, InfoMessage, PGMMessage
 
-from .utils import handle_ecode, parse_arg, path_completion
+from .utils import (com_port_completion, handle_ecode, load_history, parse_arg, path_completion,
+                    save_history)
 
-logger = logging.getLogger('flasher')
+logger = logging.getLogger(__name__)
 
 
 class FlasherCLI(EZDLFlasher, Cmd):
+    _history_file = '~/.cache/flashloader/console_history'
+    _history_size = 100
+
     intro = 'Welcome to the flashtool shell. Type help or ? to list commands.\n'
     prompt = 'flasher > '
 
@@ -119,9 +123,15 @@ class FlasherCLI(EZDLFlasher, Cmd):
         print('Thank you for using flashtool.')
         return True
 
+    def preloop(self) -> None:
+        load_history(self._history_file)
+
+    def postloop(self) -> None:
+        save_history(self._history_file, self._history_size)
+
     @staticmethod
     def complete_connect(text, line, startidx, endidx):
-        return path_completion(text, line, startidx, endidx)
+        return com_port_completion(text, line, startidx, endidx)
 
     @staticmethod
     def complete_write(text, line, startidx, endidx):

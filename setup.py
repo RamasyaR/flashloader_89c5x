@@ -17,7 +17,7 @@ install_requires = \
 
 setup_kwargs = {
     'name': 'flashloader',
-    'version': '0.0.1',
+    'version': '0.0.2',
     'description': 'Flash loader utility for 89C51 microcontrollers',
     'long_description': '',
     'author': 'Raman Rakavets',

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "flashloader"
-version = "0.0.1"
+version = "0.0.2"
 description = "Flash loader utility for 89C51 microcontrollers"
 authors = ["Raman Rakavets <radikot88@gmail.com>"]
 license = "MIT"
